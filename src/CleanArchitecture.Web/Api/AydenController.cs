@@ -46,8 +46,7 @@ namespace CleanArchitecture.Web.Api
             a.RequestPaymentFulfilment();
             _aydenRepository.Update(a);
             
-            
-            return Ok(a);
+            return RedirectToAction("Index","Summary");
         }
     }
 }

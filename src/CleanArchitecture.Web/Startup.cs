@@ -47,6 +47,14 @@ namespace CleanArchitecture.Web
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
             });
 
+            services.AddCors(
+                options => options.AddPolicy("AllowCors",
+                    builder => { builder.AllowAnyOrigin()
+                        .WithMethods("GET","POST")
+                        .AllowAnyHeader();
+                    }));
+
+
             var container = new Container();
 
             container.Configure(config =>
@@ -91,6 +99,15 @@ namespace CleanArchitecture.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            app.Use(async (context, next) =>  
+            {  
+                context.Response.Headers.Add(  
+                    "Content-Security-Policy",  
+                    "frame-ancestors ayden-iframe.local");  
+  
+                await next();  
+            });  
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -106,6 +123,7 @@ namespace CleanArchitecture.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseCors("AllowCors");
         }
     }
 }
